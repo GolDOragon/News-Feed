@@ -1,31 +1,28 @@
 import { newsAPI } from '../../api/api'
-import { DELETE_NEWS_ITEM, SET_NEWS, TOGGLE_FETCHING } from './actionTypes'
-import {
-  BaseThunkType,
-  InferActionsTypes,
-  NewsActionTypes,
-  NewsItemType,
-  NewsState,
-  ToggleFetchingActionType
-} from './types'
+import { BaseThunkType, InferActionsTypes } from '../../store'
+import { NewsItemType } from './types'
 
-const initialState: NewsState = {
+const initialState = {
   isFetching: false,
-  news: [],
+  news: [] as Array<NewsItemType>,
+  currentNewsItem: null as NewsItemType | null,
 }
 
-export default (state = initialState, action: NewsActionTypes): NewsState => {
+const newsReducer = (
+  state = initialState,
+  action: ActionsType
+): InitialStateType => {
   switch (action.type) {
-    case TOGGLE_FETCHING:
+    case 'TOGGLE_FETCHING':
       return {
         ...state,
         isFetching: action.status,
       }
 
-    case SET_NEWS:
+    case 'SET_NEWS':
       return { ...state, news: action.news }
 
-    case DELETE_NEWS_ITEM:
+    case 'DELETE_NEWS_ITEM':
       return {
         ...state,
         news: state.news.filter((newsItem) => newsItem.id !== action.id),
@@ -35,23 +32,26 @@ export default (state = initialState, action: NewsActionTypes): NewsState => {
       return state
   }
 }
-
-type ActionsType = InferActionsTypes<typeof actions>
-type ThunkType = BaseThunkType<ActionsType>
+export default newsReducer
 
 export const actions = {
-  toggleFetchingAction: (status: boolean): ToggleFetchingActionType => ({
-    type: TOGGLE_FETCHING,
-    status,
-  }),
-  setNews: (news: Array<NewsItemType>) => ({
-    type: SET_NEWS,
-    news,
-  }),
-  deleteNewsAction: (id: string) => ({
-    type: DELETE_NEWS_ITEM,
-    id,
-  }),
+  toggleFetchingAction: (status: boolean) =>
+    ({
+      type: 'TOGGLE_FETCHING',
+      status,
+    } as const),
+
+  setNews: (news: Array<NewsItemType>) =>
+    ({
+      type: 'SET_NEWS',
+      news,
+    } as const),
+
+  deleteNewsAction: (id: string) =>
+    ({
+      type: 'DELETE_NEWS_ITEM',
+      id,
+    } as const),
 }
 
 export const getNewsThunk = (): ThunkType => {
@@ -74,3 +74,8 @@ export const deleteNewsItemThunk = (id: string): ThunkType => {
     }
   }
 }
+
+export type InitialStateType = typeof initialState
+type ActionsType = InferActionsTypes<typeof actions>
+type ThunkType = BaseThunkType<ActionsType>
+// type DispatchType = Dispatch<ActionsType>
