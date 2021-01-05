@@ -14,15 +14,25 @@ export const newsAPI = {
     })
   },
   deleteNewsItem: (id: string): Promise<SuccessOperation> => {
-    currentNews = currentNews.filter((newsItem) => newsItem.id !== id)
     return new Promise((resolve) => {
-      setTimeout(
-        () =>
-          resolve({
-            resultCode: 0,
-          }),
-        1000
-      )
+      setTimeout(() => {
+        currentNews = currentNews.filter((newsItem) => newsItem.id !== id)
+
+        resolve({
+          resultCode: 0,
+        })
+      }, 1000)
+    })
+  },
+  postNewsItem: (newsItem: NewsItemType): Promise<SuccessOperation> => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        currentNews.push(newsItem)
+
+        resolve({
+          resultCode: 0,
+        })
+      }, 1000)
     })
   },
 }

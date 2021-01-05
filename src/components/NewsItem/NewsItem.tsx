@@ -8,10 +8,17 @@ type PropsType = {
   image: string
   message: string
   date: Date
+  isDisabled: boolean
 }
 
-// eslint-disable-next-line react/prop-types
-const NewsItem: React.FC<PropsType> = ({ title, date, message, image, id }) => {
+const NewsItem: React.FC<PropsType> = ({
+  title,
+  date,
+  message,
+  image,
+  id,
+  isDisabled,
+}: PropsType) => {
   const dispatch = useDispatch()
   const [editMode, setEditMode] = useState(false)
   const toggleEditMode = () => {
@@ -42,7 +49,11 @@ const NewsItem: React.FC<PropsType> = ({ title, date, message, image, id }) => {
           {editMode && (
             <div className="header__button">
               <button type="button">Edit</button>
-              <button type="button" onClick={deleteNewsItem}>
+              <button
+                disabled={isDisabled}
+                type="button"
+                onClick={deleteNewsItem}
+              >
                 Delete
               </button>
             </div>

@@ -3,7 +3,8 @@ import { BaseThunkType, InferActionsTypes } from '../../store'
 import { NewsItemType } from './types'
 
 const initialState = {
-  isFetching: false,
+  isFetching: true,
+  requestProgress: [] as Array<string>,
   news: [] as Array<NewsItemType>,
   currentNewsItem: null as NewsItemType | null,
 }
@@ -13,10 +14,18 @@ const newsReducer = (
   action: ActionsType
 ): InitialStateType => {
   switch (action.type) {
-    case 'TOGGLE_FETCHING':
+    case 'TOGGLE_IS_FETCHING':
       return {
         ...state,
-        isFetching: action.status,
+        isFetching: action.isFetching,
+      }
+
+    case 'TOGGLE_REQUEST_PROGRESS':
+      return {
+        ...state,
+        requestProgress: action.isFetching
+          ? [...state.requestProgress, action.id]
+          : state.requestProgress.filter((id) => id !== action.id),
       }
 
     case 'SET_NEWS':
@@ -28,6 +37,12 @@ const newsReducer = (
         news: state.news.filter((newsItem) => newsItem.id !== action.id),
       }
 
+    case 'POST_NEWS_ITEM':
+      return {
+        ...state,
+        news: [...state.news, action.newsItem],
+      }
+
     default:
       return state
   }
@@ -35,10 +50,16 @@ const newsReducer = (
 export default newsReducer
 
 export const actions = {
-  toggleFetchingAction: (status: boolean) =>
+  toggleIsFetchingAction: (isFetching: boolean) =>
     ({
-      type: 'TOGGLE_FETCHING',
-      status,
+      type: 'TOGGLE_IS_FETCHING',
+      isFetching,
+    } as const),
+  toggleRequestProgress: (isFetching: boolean, id: string) =>
+    ({
+      type: 'TOGGLE_REQUEST_PROGRESS',
+      isFetching,
+      id,
     } as const),
 
   setNews: (news: Array<NewsItemType>) =>
@@ -52,25 +73,41 @@ export const actions = {
       type: 'DELETE_NEWS_ITEM',
       id,
     } as const),
+  postNewsItemAction: (newsItem: NewsItemType) =>
+    ({
+      type: 'POST_NEWS_ITEM',
+      newsItem,
+    } as const),
 }
 
 export const getNewsThunk = (): ThunkType => {
   return async (dispatch) => {
-    dispatch(actions.toggleFetchingAction(true))
+    dispatch(actions.toggleIsFetchingAction(true))
     const data = await newsAPI.getNews()
     dispatch(actions.setNews(data))
-    dispatch(actions.toggleFetchingAction(false))
+    dispatch(actions.toggleIsFetchingAction(false))
   }
 }
 
 export const deleteNewsItemThunk = (id: string): ThunkType => {
   return async (dispatch) => {
-    dispatch(actions.toggleFetchingAction(true))
+    dispatch(actions.toggleIsFetchingAction(true))
+    dispatch(actions.toggleRequestProgress(true, id))
     const res = await newsAPI.deleteNewsItem(id)
 
     if (res.resultCode === 0) {
       dispatch(actions.deleteNewsAction(id))
-      dispatch(actions.toggleFetchingAction(false))
+      dispatch(actions.toggleIsFetchingAction(false))
+      dispatch(actions.toggleRequestProgress(false, id))
+    }
+  }
+}
+
+export const postNewsItemThunk = (newsItem: NewsItemType): ThunkType => {
+  return async (dispatch) => {
+    const res = await newsAPI.postNewsItem(newsItem)
+    if (res.resultCode === 0) {
+      dispatch(actions.postNewsItemAction(newsItem))
     }
   }
 }
