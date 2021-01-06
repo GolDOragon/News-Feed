@@ -13,7 +13,11 @@ const initialState = {
     date: new Date(),
     message: '',
     title: '',
+    tags: [],
   } as NewsItemType,
+  relevantTags: [] as Array<string>,
+  currentTags: [] as Array<string>,
+  searchField: '',
 }
 
 const newsReducer = (
@@ -68,6 +72,18 @@ const newsReducer = (
         currentNewsItem: action.currentNewsItem,
       }
 
+    case 'UPDATE_SEARCH_FIELD':
+      return {
+        ...state,
+        searchField: action.newValue,
+      }
+
+    case 'SET_RELEVANT_TAGS':
+      return {
+        ...state,
+        relevantTags: action.tags,
+      }
+
     default:
       return state
   }
@@ -118,6 +134,16 @@ export const actions = {
       type: 'SEND_NEWS_ITEM_TO_STATE',
       newsItem,
     } as const),
+  updateSearchField: (newValue: string) =>
+    ({
+      type: 'UPDATE_SEARCH_FIELD',
+      newValue,
+    } as const),
+  setRelevantTags: (tags: Array<string>) =>
+    ({
+      type: 'SET_RELEVANT_TAGS',
+      tags,
+    } as const),
 }
 
 export const getNewsThunk = (): ThunkType => {
@@ -149,6 +175,16 @@ export const postNewsItemThunk = (newsItem: NewsItemType): ThunkType => {
     if (res.resultCode === 0) {
       dispatch(actions.postNewsItemAction(newsItem))
       dispatch(actions.toggleIsEditMode(false))
+    }
+  }
+}
+
+export const getRelevantTagsThunk = (searchedTag: string): ThunkType => {
+  return async (dispatch) => {
+    const res = await newsAPI.getRelevantTags(searchedTag)
+
+    if (res.resultCode === 0) {
+      dispatch(actions.setRelevantTags(res.data!.relevantTags || []))
     }
   }
 }

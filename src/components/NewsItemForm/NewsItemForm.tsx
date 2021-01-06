@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectors } from '../../features/news'
+import { newsSelectors } from '../../features/news'
 import { postNewsItemThunk } from '../../features/news/newsReducer'
 
 const NewsItemForm: React.FC = () => {
   const dispatch = useDispatch()
-  const currentNewsItem = useSelector(selectors.getCurrentNewsItem)
+  const currentNewsItem = useSelector(newsSelectors.getCurrentNewsItem)
 
   const [title, setTitle] = useState(currentNewsItem?.title)
   const [date, setDate] = useState(currentNewsItem?.date)
@@ -38,6 +38,7 @@ const NewsItemForm: React.FC = () => {
         image,
         message,
         id: date.toString(),
+        tags: [],
       })
     )
   }

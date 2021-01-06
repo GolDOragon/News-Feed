@@ -4,6 +4,7 @@ type NewsItem = {
   image: string
   message: string
   date: Date
+  tags: Array<string>
 }
 
 export const news: Array<NewsItem> = [
@@ -13,7 +14,9 @@ export const news: Array<NewsItem> = [
     id: '1',
     image: `https://ichef.bbci.co.uk/news/976/cpsprodpb/145E9/production/_116333438_pence.jpg`,
     message: `US Vice-President Mike Pence has welcomed an effort by a group of senators to refuse to certify Joe Biden's presidential election win.`,
+    tags: ['Biden', 'America', 'Politic'],
   },
+
   {
     date: new Date(2020, 2, 2),
     id: '2',
@@ -23,5 +26,6 @@ export const news: Array<NewsItem> = [
     message: `Sources close to his family told ABC News and his former employer CNN that he has been at Cedars-Sinai Medical Centre for over a week.
 
 King, whose career spans over 60 years, has won multiple accolades, including two Peabody Awards and an Emmy.`,
+    tags: ['America', 'Veterans'],
   },
 ]

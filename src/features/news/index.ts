@@ -1,6 +1,5 @@
-import * as actionTypes from './actionTypes'
-import * as selectors from './selectors'
+/* eslint-disable import/no-cycle */
+import * as newsSelectors from './selectors'
 
 export { default as NewsReducer } from './newsReducer'
-export { actionTypes }
-export { selectors }
+export { newsSelectors }

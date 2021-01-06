@@ -4,4 +4,5 @@ export type NewsItemType = {
   image: string
   message: string
   date: Date
+  tags: Array<string>
 }

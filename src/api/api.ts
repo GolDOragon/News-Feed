@@ -3,6 +3,9 @@ import { news } from './data'
 
 type SuccessOperation = {
   resultCode: number
+  data?: {
+    relevantTags?: Array<string>
+  }
 }
 
 let currentNews = news
@@ -33,6 +36,29 @@ export const newsAPI = {
           resultCode: 0,
         })
       }, 1000)
+    })
+  },
+  getRelevantTags: (searchedTag: string): Promise<SuccessOperation> => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const relevantTagsSet: Set<string> = new Set()
+        currentNews.forEach((newsItem) => {
+          newsItem.tags
+            .filter((tag) =>
+              tag.toLowerCase().includes(searchedTag.toLowerCase())
+            )
+            .forEach((tag) => {
+              relevantTagsSet.add(tag)
+            })
+        })
+
+        resolve({
+          resultCode: 0,
+          data: {
+            relevantTags: Array.from(relevantTagsSet),
+          },
+        })
+      }, 200)
     })
   },
 }

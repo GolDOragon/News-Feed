@@ -1,11 +1,12 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectors } from '../../features/news'
+import { newsSelectors } from '../../features/news'
 import { actions } from '../../features/news/newsReducer'
 import NewsItemForm from '../NewsItemForm'
+import SearchBar from '../SearchBar/SearchBar'
 
 const Header = () => {
-  const isEditMode = useSelector(selectors.getIsEditMode)
+  const isEditMode = useSelector(newsSelectors.getIsEditMode)
   const dispatch = useDispatch()
   const handleActivateEditMode = () => {
     dispatch(actions.toggleIsEditMode(true))
@@ -14,10 +15,7 @@ const Header = () => {
   return (
     <header className="header">
       <div className="header__searchBar-container">
-        <input type="text" value={`SEarch BAR${1 + 2}`} />
-        <button className="header__button" type="submit">
-          Search
-        </button>
+        <SearchBar />
       </div>
 
       <div className="header__createNewsItem-container">

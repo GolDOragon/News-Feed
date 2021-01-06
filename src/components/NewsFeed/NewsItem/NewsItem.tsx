@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { actions, deleteNewsItemThunk } from '../../features/news/newsReducer'
+import {
+  actions,
+  deleteNewsItemThunk
+} from '../../../features/news/newsReducer'
 
 type PropsType = {
   id: string
