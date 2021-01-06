@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectors } from '../../features/news'
-import { getNewsThunk } from '../../features/news/newsReducer'
+import { actions, getNewsThunk } from '../../features/news/newsReducer'
 import NewsItem from '../NewsItem'
 
 const NewsFeed: React.FC = () => {
@@ -23,6 +23,9 @@ const NewsFeed: React.FC = () => {
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...newsItem}
             isDisabled={requestProgress.some((id) => id === newsItem.id)}
+            sendNewsItemToState={() =>
+              dispatch(actions.sendNewsItemToState(newsItem))
+            }
           />
         ))}
     </div>

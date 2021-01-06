@@ -10,7 +10,7 @@ let currentNews = news
 export const newsAPI = {
   getNews: (): Promise<Array<NewsItemType>> => {
     return new Promise((resolve) => {
-      setTimeout(() => resolve(currentNews), 1000)
+      setTimeout(() => resolve(currentNews.slice()), 1000)
     })
   },
   deleteNewsItem: (id: string): Promise<SuccessOperation> => {

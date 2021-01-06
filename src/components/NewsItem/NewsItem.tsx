@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { deleteNewsItemThunk } from '../../features/news/newsReducer'
+import { actions, deleteNewsItemThunk } from '../../features/news/newsReducer'
 
 type PropsType = {
   id: string
@@ -9,6 +9,7 @@ type PropsType = {
   message: string
   date: Date
   isDisabled: boolean
+  sendNewsItemToState: () => void
 }
 
 const NewsItem: React.FC<PropsType> = ({
@@ -18,11 +19,19 @@ const NewsItem: React.FC<PropsType> = ({
   image,
   id,
   isDisabled,
+  sendNewsItemToState,
 }: PropsType) => {
   const dispatch = useDispatch()
-  const [editMode, setEditMode] = useState(false)
-  const toggleEditMode = () => {
-    setEditMode(!editMode)
+  const [isShowButton, setIsShowButton] = useState(false)
+
+  const handleToggleIsShowButton = () => {
+    setIsShowButton(!isShowButton)
+  }
+
+  const handleEditNewsItem = () => {
+    dispatch(actions.toggleIsEditMode(false))
+    sendNewsItemToState()
+    dispatch(actions.toggleIsEditMode(true))
   }
 
   const deleteNewsItem = () => {
@@ -42,13 +51,15 @@ const NewsItem: React.FC<PropsType> = ({
           <button
             className="header__controls"
             type="button"
-            onClick={toggleEditMode}
+            onClick={handleToggleIsShowButton}
           >
             ***
           </button>
-          {editMode && (
+          {isShowButton && (
             <div className="header__button">
-              <button type="button">Edit</button>
+              <button type="button" onClick={handleEditNewsItem}>
+                Edit
+              </button>
               <button
                 disabled={isDisabled}
                 type="button"

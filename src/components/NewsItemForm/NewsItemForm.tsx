@@ -1,13 +1,23 @@
-import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { selectors } from '../../features/news'
 import { postNewsItemThunk } from '../../features/news/newsReducer'
 
 const NewsItemForm: React.FC = () => {
   const dispatch = useDispatch()
-  const [title, setTitle] = useState('')
-  const [date, setDate] = useState(new Date())
-  const [image, setImage] = useState('')
-  const [message, setMessage] = useState('')
+  const currentNewsItem = useSelector(selectors.getCurrentNewsItem)
+
+  const [title, setTitle] = useState(currentNewsItem?.title)
+  const [date, setDate] = useState(currentNewsItem?.date)
+  const [image, setImage] = useState(currentNewsItem?.image)
+  const [message, setMessage] = useState(currentNewsItem?.message)
+
+  useEffect(() => {
+    setDate(currentNewsItem?.date)
+    setTitle(currentNewsItem?.title)
+    setImage(currentNewsItem?.image)
+    setMessage(currentNewsItem?.message)
+  }, [currentNewsItem])
 
   const handleChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.currentTarget.value)

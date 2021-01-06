@@ -1,7 +1,16 @@
 import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { selectors } from '../../features/news'
+import { actions } from '../../features/news/newsReducer'
 import NewsItemForm from '../NewsItemForm'
 
 const Header = () => {
+  const isEditMode = useSelector(selectors.getIsEditMode)
+  const dispatch = useDispatch()
+  const handleActivateEditMode = () => {
+    dispatch(actions.toggleIsEditMode(true))
+  }
+
   return (
     <header className="header">
       <div className="header__searchBar-container">
@@ -12,11 +21,13 @@ const Header = () => {
       </div>
 
       <div className="header__createNewsItem-container">
-        <button type="button">Create Post</button>
+        <button type="button" onClick={handleActivateEditMode}>
+          Create Post
+        </button>
       </div>
 
       <div className="header__newsItemForm-container">
-        {true && <NewsItemForm />}
+        {isEditMode && <NewsItemForm />}
       </div>
     </header>
   )
