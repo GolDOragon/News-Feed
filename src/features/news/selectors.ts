@@ -4,9 +4,22 @@ import { AppStateType } from '../../store'
 export const getRequestProgress = (state: AppStateType) =>
   state.news.requestProgress
 
-export const getNews = (state: AppStateType) => state.news.news
+export const getNews = (state: AppStateType) => {
+  const checkCrossing = (
+    newsItemTags: Array<string>,
+    selectedTags: Array<string>
+  ): boolean => {
+    for (let i = 0; i < selectedTags.length; i += 1) {
+      if (!newsItemTags.includes(selectedTags[i])) return false
+    }
+    return true
+  }
 
-export const getIsEditMode = (state: AppStateType) => state.news.isEditMode
+  const { selectedTags, news } = state.news
+  return news.filter((newsItem) => checkCrossing(newsItem.tags, selectedTags))
+}
+
+export const getAppWorkMode = (state: AppStateType) => state.news.appWorkMode
 
 export const getCurrentNewsItem = (state: AppStateType) =>
   state.news.currentNewsItem

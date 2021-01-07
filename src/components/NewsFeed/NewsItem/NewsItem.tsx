@@ -32,9 +32,8 @@ const NewsItem: React.FC<PropsType> = ({
   }
 
   const handleEditNewsItem = () => {
-    dispatch(actions.toggleIsEditMode(false))
+    dispatch(actions.toggleAppWorkMode('edit'))
     sendNewsItemToState()
-    dispatch(actions.toggleIsEditMode(true))
   }
 
   const deleteNewsItem = () => {

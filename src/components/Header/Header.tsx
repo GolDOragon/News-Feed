@@ -6,10 +6,10 @@ import NewsItemForm from '../NewsItemForm'
 import SearchBar from '../SearchBar/SearchBar'
 
 const Header = () => {
-  const isEditMode = useSelector(newsSelectors.getIsEditMode)
+  const appWorkMode = useSelector(newsSelectors.getAppWorkMode)
   const dispatch = useDispatch()
-  const handleActivateEditMode = () => {
-    dispatch(actions.toggleIsEditMode(true))
+  const handleChangeAppWorkMode = () => {
+    dispatch(actions.toggleAppWorkMode('add'))
   }
 
   return (
@@ -19,13 +19,13 @@ const Header = () => {
       </div>
 
       <div className="header__createNewsItem-container">
-        <button type="button" onClick={handleActivateEditMode}>
+        <button type="button" onClick={handleChangeAppWorkMode}>
           Create Post
         </button>
       </div>
 
       <div className="header__newsItemForm-container">
-        {isEditMode && <NewsItemForm />}
+        {appWorkMode !== 'view' && <NewsItemForm />}
       </div>
     </header>
   )

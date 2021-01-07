@@ -1,9 +1,10 @@
 import { newsAPI } from '../../api/api'
 import { BaseThunkType, InferActionsTypes } from '../../store'
-import { NewsItemType } from './types'
+import { AppWorkModeType, NewsItemType } from './types'
 
 const initialState = {
   isFetching: true,
+  appWorkMode: 'view' as AppWorkModeType,
   isEditMode: false,
   requestProgress: [] as Array<string>,
   news: [] as Array<NewsItemType>,
@@ -25,10 +26,10 @@ const newsReducer = (
   action: ActionsType
 ): InitialStateType => {
   switch (action.type) {
-    case 'TOGGLE_IS_EDIT_MODE':
+    case 'TOGGLE_APP_WORK_MODE':
       return {
         ...state,
-        isEditMode: action.isEditMode,
+        appWorkMode: action.newValue,
       }
 
     case 'TOGGLE_IS_FETCHING':
@@ -107,10 +108,10 @@ export const actions = {
       type: 'UPDATE_CURRENT_NEWS_ITEM',
       currentNewsItem,
     } as const),
-  toggleIsEditMode: (isEditMode: boolean) =>
+  toggleAppWorkMode: (newValue: AppWorkModeType) =>
     ({
-      type: 'TOGGLE_IS_EDIT_MODE',
-      isEditMode,
+      type: 'TOGGLE_APP_WORK_MODE',
+      newValue,
     } as const),
   toggleIsFetchingAction: (isFetching: boolean) =>
     ({
@@ -195,7 +196,7 @@ export const postNewsItemThunk = (newsItem: NewsItemType): ThunkType => {
     const res = await newsAPI.postNewsItem(newsItem)
     if (res.resultCode === 0) {
       dispatch(actions.postNewsItemAction(newsItem))
-      dispatch(actions.toggleIsEditMode(false))
+      dispatch(actions.toggleAppWorkMode('view'))
     }
   }
 }

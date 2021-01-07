@@ -6,3 +6,5 @@ export type NewsItemType = {
   date: Date
   tags: Array<string>
 }
+
+export type AppWorkModeType = 'view' | 'edit' | 'add'
