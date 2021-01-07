@@ -1,3 +1,5 @@
+import { SearchOutlined } from '@ant-design/icons'
+import { Button, Input, Tooltip } from 'antd'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { newsSelectors } from '../../features/news'
@@ -33,31 +35,30 @@ const SearchBar = () => {
     <div className="searchBar">
       <div className="searchBar__search">
         <div className="search__input-container">
-          <input
-            type="text"
+          <Input
             className="search__input"
             onChange={handleChangeSearchInput}
             value={searchField}
           />
         </div>
         <div className="search__button-container">
-          <button className="search__button" type="button">
-            O
-          </button>
+          <Tooltip title="search">
+            <Button type="primary" shape="circle" icon={<SearchOutlined />} />
+          </Tooltip>
         </div>
       </div>
       <div className="searchBar__tags">
-        <div className="tags__checkbox">Use tags</div>
+        {/* <div className="tags__checkbox">Use tags</div> */}
         <div className="tags__tagStore">
           {selectedTags.map((tag) => (
-            <button
-              type="button"
+            <Button
+              type="dashed"
               key={tag}
               className="tagStore__btn"
               onClick={() => handleUnselectTag(tag)}
             >
               {tag} <span className="tagStore__btnX">X</span>
-            </button>
+            </Button>
           ))}
         </div>
       </div>
