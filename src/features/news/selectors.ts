@@ -14,3 +14,5 @@ export const getCurrentNewsItem = (state: AppStateType) =>
 export const getSearchField = (state: AppStateType) => state.news.searchField
 
 export const getRelevantTags = (state: AppStateType) => state.news.relevantTags
+
+export const getSelectedTags = (state: AppStateType) => state.news.selectedTags

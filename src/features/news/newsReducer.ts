@@ -16,7 +16,7 @@ const initialState = {
     tags: [],
   } as NewsItemType,
   relevantTags: [] as Array<string>,
-  currentTags: [] as Array<string>,
+  selectedTags: [] as Array<string>,
   searchField: '',
 }
 
@@ -84,6 +84,17 @@ const newsReducer = (
         relevantTags: action.tags,
       }
 
+    case 'ADD_SELECTED_TAG':
+      return {
+        ...state,
+        selectedTags: [...state.selectedTags, action.tag],
+      }
+
+    case 'REMOVE_SELECTED_TAG':
+      return {
+        ...state,
+        selectedTags: state.selectedTags.filter((tag) => tag !== action.tag),
+      }
     default:
       return state
   }
@@ -144,6 +155,16 @@ export const actions = {
       type: 'SET_RELEVANT_TAGS',
       tags,
     } as const),
+  addSelectedTag: (tag: string) =>
+    ({
+      type: 'ADD_SELECTED_TAG',
+      tag,
+    } as const),
+  removeSelectedTag: (tag: string) =>
+    ({
+      type: 'REMOVE_SELECTED_TAG',
+      tag,
+    } as const),
 }
 
 export const getNewsThunk = (): ThunkType => {
@@ -179,9 +200,12 @@ export const postNewsItemThunk = (newsItem: NewsItemType): ThunkType => {
   }
 }
 
-export const getRelevantTagsThunk = (searchedTag: string): ThunkType => {
+export const getRelevantTagsThunk = (
+  searchedTag: string,
+  selectedTags: Array<string>
+): ThunkType => {
   return async (dispatch) => {
-    const res = await newsAPI.getRelevantTags(searchedTag)
+    const res = await newsAPI.getRelevantTags(searchedTag, selectedTags)
 
     if (res.resultCode === 0) {
       dispatch(actions.setRelevantTags(res.data!.relevantTags || []))

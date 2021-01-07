@@ -38,15 +38,28 @@ export const newsAPI = {
       }, 1000)
     })
   },
-  getRelevantTags: (searchedTag: string): Promise<SuccessOperation> => {
+  getRelevantTags: (
+    searchedTag: string,
+    selectedTags: Array<string>
+  ): Promise<SuccessOperation> => {
     return new Promise((resolve) => {
       setTimeout(() => {
+        if (searchedTag === '') {
+          resolve({
+            resultCode: 0,
+            data: {
+              relevantTags: [],
+            },
+          })
+        }
+
         const relevantTagsSet: Set<string> = new Set()
         currentNews.forEach((newsItem) => {
           newsItem.tags
             .filter((tag) =>
               tag.toLowerCase().includes(searchedTag.toLowerCase())
             )
+            .filter((tag) => !selectedTags.includes(tag))
             .forEach((tag) => {
               relevantTagsSet.add(tag)
             })
