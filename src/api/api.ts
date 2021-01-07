@@ -1,5 +1,4 @@
-import { NewsItemType } from '../features/news/types'
-import { news } from './data'
+import { news, NewsItemType } from './data'
 
 type SuccessOperation = {
   resultCode: number

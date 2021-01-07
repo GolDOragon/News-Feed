@@ -1,4 +1,4 @@
-type NewsItem = {
+export type NewsItemType = {
   id: string
   title: string
   image: string
@@ -7,7 +7,7 @@ type NewsItem = {
   tags: Array<string>
 }
 
-export const news: Array<NewsItem> = [
+export const news: Array<NewsItemType> = [
   {
     title: `Biden election: Mike Pence 'welcomes' senators' bid to derail result`,
     date: new Date(2020, 1, 1),
