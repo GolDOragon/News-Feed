@@ -1,4 +1,4 @@
-import { news, NewsItemType } from './data'
+import { news, NewsItemTypeForData } from './data'
 
 type SuccessOperation = {
   resultCode: number
@@ -10,7 +10,7 @@ type SuccessOperation = {
 let currentNews = news
 
 export const newsAPI = {
-  getNews: (): Promise<Array<NewsItemType>> => {
+  getNews: (): Promise<Array<NewsItemTypeForData>> => {
     return new Promise((resolve) => {
       setTimeout(() => resolve(currentNews.slice()), 1000)
     })
@@ -26,7 +26,7 @@ export const newsAPI = {
       }, 1000)
     })
   },
-  postNewsItem: (newsItem: NewsItemType): Promise<SuccessOperation> => {
+  postNewsItem: (newsItem: NewsItemTypeForData): Promise<SuccessOperation> => {
     return new Promise((resolve) => {
       setTimeout(() => {
         currentNews.push(newsItem)
