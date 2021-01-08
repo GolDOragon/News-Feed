@@ -1,9 +1,11 @@
+import { Button } from 'antd'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { newsSelectors } from '../../features/news'
 import { actions } from '../../features/news/newsReducer'
 import NewsItemForm from '../NewsItemForm'
 import SearchBar from '../SearchBar/SearchBar'
+import css from './Header.module.css'
 
 const Header = () => {
   const appWorkMode = useSelector(newsSelectors.getAppWorkMode)
@@ -13,18 +15,15 @@ const Header = () => {
   }
 
   return (
-    <header className="header">
-      <div className="header__searchBar-container">
+    <header className={css.header}>
+      <div className={css['header__searchBar-container']}>
         <SearchBar />
+        <Button type="primary" onClick={handleChangeAppWorkMode} size="large">
+          Post news
+        </Button>
       </div>
 
-      <div className="header__createNewsItem-container">
-        <button type="button" onClick={handleChangeAppWorkMode}>
-          Create Post
-        </button>
-      </div>
-
-      <div className="header__newsItemForm-container">
+      <div className={css['header__newsItemForm-container']}>
         {appWorkMode !== 'view' && <NewsItemForm />}
       </div>
     </header>

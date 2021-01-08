@@ -8,8 +8,12 @@ const App: React.FC = () => {
   return (
     <BrowserRouter>
       <div className={css.app}>
-        <Header />
-        <NewsFeed />
+        <div className={css['app__header-container']}>
+          <Header />
+        </div>
+        <div className={css['app__newsFeed-container']}>
+          <NewsFeed />
+        </div>
       </div>
     </BrowserRouter>
   )

@@ -214,6 +214,32 @@ export const getRelevantTagsThunk = (
   }
 }
 
+export const selectTagThunk = (
+  tag: string,
+  selectedTags: Array<string>
+): ThunkType => {
+  return async (dispatch) => {
+    dispatch(actions.addSelectedTag(tag))
+    dispatch(actions.updateSearchField(''))
+    dispatch(getRelevantTagsThunk('', [...selectedTags, tag]))
+  }
+}
+export const unselectTagThunk = (
+  tag: string,
+  searchField: string,
+  selectedTags: Array<string>
+): ThunkType => {
+  return async (dispatch) => {
+    dispatch(actions.removeSelectedTag(tag))
+    dispatch(
+      getRelevantTagsThunk(
+        searchField,
+        selectedTags.filter((selTag) => selTag !== tag)
+      )
+    )
+  }
+}
+
 export type InitialStateType = typeof initialState
 type ActionsType = InferActionsTypes<typeof actions>
 type ThunkType = BaseThunkType<ActionsType>
