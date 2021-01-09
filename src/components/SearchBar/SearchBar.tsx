@@ -16,7 +16,7 @@ const SearchBar = () => {
   const relevantTags = useSelector(newsSelectors.getRelevantTags)
   const selectedTags = useSelector(newsSelectors.getSelectedTags)
 
-  const handleChangeSearchInput = (value: string) => {
+  const handleChangeSearchField = (value: string) => {
     dispatch(actions.updateSearchField(value))
     dispatch(getRelevantTagsThunk(value, selectedTags))
   }
@@ -34,9 +34,10 @@ const SearchBar = () => {
         options={relevantTags}
         searchValue={searchField}
         placeholder="Select tags..."
-        onSearch={handleChangeSearchInput}
+        onSearch={handleChangeSearchField}
         onSelect={handleSelectTag}
         onDeselect={handleUnselectTag}
+        getPopupContainer={(trigger) => trigger.parentNode}
         style={{ width: '100%' }}
         size="large"
       />

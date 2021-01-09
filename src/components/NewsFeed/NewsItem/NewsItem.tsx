@@ -1,18 +1,16 @@
-import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
-import {
-  actions,
-  deleteNewsItemThunk
-} from '../../../features/news/newsReducer'
+import { EllipsisOutlined } from '@ant-design/icons'
+import { Button, Dropdown, Menu, Tag } from 'antd'
+import React from 'react'
+import css from './NewsItem.module.css'
 
 type PropsType = {
-  id: string
   title: string
   image: string
   message: string
-  date: Date
-  isDisabled: boolean
-  sendNewsItemToState: () => void
+  date: string
+  tags: Array<string>
+  editNewsItem: () => void
+  deleteNewsItem: () => void
 }
 
 const NewsItem: React.FC<PropsType> = ({
@@ -20,70 +18,58 @@ const NewsItem: React.FC<PropsType> = ({
   date,
   message,
   image,
-  id,
-  isDisabled,
-  sendNewsItemToState,
+  tags,
+  editNewsItem,
+  deleteNewsItem,
 }: PropsType) => {
-  const dispatch = useDispatch()
-  const [isShowButton, setIsShowButton] = useState(false)
-
-  const handleToggleIsShowButton = () => {
-    setIsShowButton(!isShowButton)
-  }
-
   const handleEditNewsItem = () => {
-    dispatch(actions.toggleAppWorkMode('edit'))
-    sendNewsItemToState()
+    editNewsItem()
   }
 
-  const deleteNewsItem = () => {
-    dispatch(deleteNewsItemThunk(id))
+  const handleDeleteNewsItem = () => {
+    deleteNewsItem()
   }
 
+  const menu = (
+    <Menu>
+      <Menu.Item>
+        <Button onClick={handleEditNewsItem}>Edit</Button>
+      </Menu.Item>
+      <Menu.Item>
+        <Button onClick={handleDeleteNewsItem}>Delete</Button>
+      </Menu.Item>
+    </Menu>
+  )
   return (
-    <div className="newsItem">
-      <header className="newsItem__header">
-        <div className="header__title-container">
-          <p className="header__title">{title}</p>
+    <div className={css.newsItem}>
+      <header className={css.newsItem__header}>
+        <div className={css.header__meta}>
+          <div className={css['header__date-container']}>
+            <p className={css.header__date}>{date}</p>
+          </div>
+          <div className={css['header__tags-container']}>
+            {tags.map((tag) => (
+              <Tag key={tag}>{tag}</Tag>
+            ))}
+          </div>
         </div>
-        <div className="header__date-container">
-          <p className="header__date">{date.toLocaleString()}</p>
-        </div>
-        <div className="header__controls-container">
-          <button
-            className="header__controls"
-            type="button"
-            onClick={handleToggleIsShowButton}
-          >
-            ***
-          </button>
-          {isShowButton && (
-            <div className="header__button">
-              <button type="button" onClick={handleEditNewsItem}>
-                Edit
-              </button>
-              <button
-                disabled={isDisabled}
-                type="button"
-                onClick={deleteNewsItem}
-              >
-                Delete
-              </button>
-            </div>
-          )}
+        <div className={css['header__controls-container']}>
+          <Dropdown overlay={menu} placement="bottomRight">
+            <EllipsisOutlined />
+          </Dropdown>
         </div>
       </header>
-      <main className="newsItem__main">
-        <div className="main__message-container">
-          <p className="main__message">{message}</p>
+      <main className={css.newsItem__main}>
+        <div className={css['main__title-container']}>
+          <p className={css.main__title}>{title}</p>
         </div>
-        <div className="main__image-container">
-          <img className="main__image" src={image} alt={title} />
+        <div className={css['main__message-container']}>
+          <p className={css.main__message}>{message}</p>
+        </div>
+        <div className={css['main__image-container']}>
+          {image && <img className={css.main__image} src={image} alt={title} />}
         </div>
       </main>
-      <footer className="newsItem__footer">
-        <div className="footer__likes">0</div>
-      </footer>
     </div>
   )
 }

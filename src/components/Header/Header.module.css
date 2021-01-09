@@ -1,13 +1,12 @@
 .header {
   position: fixed;
-  max-width: 800px;
+  max-width: 600px;
   width: 100%;
   background-color: white;
 }
 
 .header__searchBar-container {
   max-width: 100%;
-  margin: 5px 0;
 
   display: grid;
   grid-template-columns: 1fr 100px;

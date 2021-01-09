@@ -1,23 +1,32 @@
-// eslint-disable-next-line import/no-cycle
+import { createSelector } from 'reselect'
 import { AppStateType } from '../../store'
 
-export const getRequestProgress = (state: AppStateType) =>
-  state.news.requestProgress
+export const getNews = createSelector(
+  [
+    (state: AppStateType) => state.news.news,
+  ],
+  (filteredNews) => {
+    const executeDate = (date: Date): string => {
+      const diff = Date.now() - +date
 
-export const getNews = (state: AppStateType) => {
-  const checkCrossing = (
-    newsItemTags: Array<string>,
-    selectedTags: Array<string>
-  ): boolean => {
-    for (let i = 0; i < selectedTags.length; i += 1) {
-      if (!newsItemTags.includes(selectedTags[i])) return false
+      const sec = Math.floor(diff / 1000)
+      if (sec < 60) return 'less 1 min'
+
+      const min = Math.floor(diff / (60 * 1000))
+      if (min < 60) return min + ' min'
+
+      const hours = Math.floor(diff / (60 * 60 * 1000))
+      if (hours < 49) return hours + 'h'
+
+      return date.toUTCString().match(/\d{2} \w+/)![0]
     }
-    return true
-  }
 
-  const { selectedTags, news } = state.news
-  return news.filter((newsItem) => checkCrossing(newsItem.tags, selectedTags))
-}
+    return filteredNews.map((newsItem) => ({
+      ...newsItem,
+      date: executeDate(newsItem.date),
+    }))
+  }
+)
 
 export const getAppWorkMode = (state: AppStateType) => state.news.appWorkMode
 
@@ -26,6 +35,7 @@ export const getCurrentNewsItem = (state: AppStateType) =>
 
 export const getSearchField = (state: AppStateType) => state.news.searchField
 
-export const getRelevantTags = (state: AppStateType) => state.news.relevantTags
+export const getRelevantTags = (state: AppStateType) =>
+  state.news.relevantTags.map((tag) => ({ value: tag, label: tag }))
 
 export const getSelectedTags = (state: AppStateType) => state.news.selectedTags

@@ -2,17 +2,40 @@ import { news, NewsItemTypeForData } from './data'
 
 type SuccessOperation = {
   resultCode: number
-  data?: {
+  data: {
     relevantTags?: Array<string>
+    news?: Array<NewsItemTypeForData>
   }
 }
 
-let currentNews = news
+let currentNews: Array<NewsItemTypeForData> = news
 
 export const newsAPI = {
-  getNews: (): Promise<Array<NewsItemTypeForData>> => {
+  getNews: (tags: Array<string>): Promise<SuccessOperation> => {
+    const checkCompliance = (
+      currentTags: Array<string>,
+      requestedTags: Array<string>
+    ): boolean => {
+      for (let i = 0; i < requestedTags.length; i += 1) {
+        if (!currentTags.includes(requestedTags[i])) return false
+      }
+      return true
+    }
+    const sendingNews = currentNews
+      .filter((newsItem) => checkCompliance(newsItem.tags, tags))
+      .sort((a, b) => (a.date > b.date ? -1 : 1))
+
     return new Promise((resolve) => {
-      setTimeout(() => resolve(currentNews.slice()), 1000)
+      setTimeout(
+        () =>
+          resolve({
+            resultCode: 0,
+            data: {
+              news: sendingNews,
+            },
+          }),
+        1000
+      )
     })
   },
   deleteNewsItem: (id: string): Promise<SuccessOperation> => {
@@ -22,6 +45,7 @@ export const newsAPI = {
 
         resolve({
           resultCode: 0,
+          data: {},
         })
       }, 1000)
     })
@@ -33,6 +57,24 @@ export const newsAPI = {
 
         resolve({
           resultCode: 0,
+          data: {},
+        })
+      }, 1000)
+    })
+  },
+  updateNewsItem: (
+    newsItem: NewsItemTypeForData
+  ): Promise<SuccessOperation> => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        currentNews = currentNews.map((item) => {
+          if (item.id === newsItem.id) return newsItem
+          return item
+        })
+
+        resolve({
+          resultCode: 0,
+          data: {},
         })
       }, 1000)
     })

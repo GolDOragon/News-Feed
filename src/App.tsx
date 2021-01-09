@@ -1,6 +1,6 @@
 import React from 'react'
 import { BrowserRouter } from 'react-router-dom'
-import css from './app.module.css'
+import css from './App.module.css'
 import Header from './components/Header'
 import NewsFeed from './components/NewsFeed'
 

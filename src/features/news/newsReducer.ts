@@ -1,12 +1,11 @@
+import { message } from 'antd'
 import { newsAPI } from '../../api/api'
 import { BaseThunkType, InferActionsTypes } from '../../store'
 import { AppWorkModeType, NewsItemType } from './types'
 
 const initialState = {
-  isFetching: true,
   appWorkMode: 'view' as AppWorkModeType,
   isEditMode: false,
-  requestProgress: [] as Array<string>,
   news: [] as Array<NewsItemType>,
   currentNewsItem: {
     id: '',
@@ -32,19 +31,6 @@ const newsReducer = (
         appWorkMode: action.newValue,
       }
 
-    case 'TOGGLE_IS_FETCHING':
-      return {
-        ...state,
-        isFetching: action.isFetching,
-      }
-
-    case 'TOGGLE_REQUEST_PROGRESS':
-      return {
-        ...state,
-        requestProgress: action.isFetching
-          ? [...state.requestProgress, action.id]
-          : state.requestProgress.filter((id) => id !== action.id),
-      }
 
     case 'SET_NEWS':
       return { ...state, news: action.news }
@@ -60,17 +46,39 @@ const newsReducer = (
         ...state,
         news: [...state.news, action.newsItem],
       }
-
-    case 'SEND_NEWS_ITEM_TO_STATE':
+    case 'UPDATE_NEWS_ITEM':
       return {
         ...state,
-        currentNewsItem: action.newsItem,
+        news: state.news.map((item) => {
+          if (item.id === action.newsItem.id) return action.newsItem
+          return item
+        }),
+      }
+
+    case 'ADD_NEWS_ITEM_TO_STATE':
+      return {
+        ...state,
+        currentNewsItem: state.news.find(
+          (newsItem) => newsItem.id === action.id
+        )!,
       }
 
     case 'UPDATE_CURRENT_NEWS_ITEM':
       return {
         ...state,
         currentNewsItem: action.currentNewsItem,
+      }
+    case 'CLEAR_CURRENT_NEWS_ITEM':
+      return {
+        ...state,
+        currentNewsItem: {
+          id: '',
+          image: '',
+          date: new Date(),
+          message: '',
+          title: '',
+          tags: [],
+        },
       }
 
     case 'UPDATE_SEARCH_FIELD':
@@ -108,21 +116,14 @@ export const actions = {
       type: 'UPDATE_CURRENT_NEWS_ITEM',
       currentNewsItem,
     } as const),
+  clearCurrentNewsItem: () =>
+    ({
+      type: 'CLEAR_CURRENT_NEWS_ITEM',
+    } as const),
   toggleAppWorkMode: (newValue: AppWorkModeType) =>
     ({
       type: 'TOGGLE_APP_WORK_MODE',
       newValue,
-    } as const),
-  toggleIsFetchingAction: (isFetching: boolean) =>
-    ({
-      type: 'TOGGLE_IS_FETCHING',
-      isFetching,
-    } as const),
-  toggleRequestProgress: (isFetching: boolean, id: string) =>
-    ({
-      type: 'TOGGLE_REQUEST_PROGRESS',
-      isFetching,
-      id,
     } as const),
 
   setNews: (news: Array<NewsItemType>) =>
@@ -131,15 +132,25 @@ export const actions = {
       news,
     } as const),
 
-  deleteNewsAction: (id: string) =>
+  deleteNews: (id: string) =>
     ({
       type: 'DELETE_NEWS_ITEM',
       id,
     } as const),
-  postNewsItemAction: (newsItem: NewsItemType) =>
+  postNewsItem: (newsItem: NewsItemType) =>
     ({
       type: 'POST_NEWS_ITEM',
       newsItem,
+    } as const),
+  updateNewsItem: (newsItem: NewsItemType) =>
+    ({
+      type: 'UPDATE_NEWS_ITEM',
+      newsItem,
+    } as const),
+  addNewsItemToState: (id: string) =>
+    ({
+      type: 'ADD_NEWS_ITEM_TO_STATE',
+      id,
     } as const),
   sendNewsItemToState: (newsItem: NewsItemType) =>
     ({
@@ -168,35 +179,54 @@ export const actions = {
     } as const),
 }
 
-export const getNewsThunk = (): ThunkType => {
+export const requestNewsThunk = (
+  selectedTags: Array<string> = []
+): ThunkType => {
   return async (dispatch) => {
-    dispatch(actions.toggleIsFetchingAction(true))
-    const data = await newsAPI.getNews()
-    dispatch(actions.setNews(data))
-    dispatch(actions.toggleIsFetchingAction(false))
+    const hide = message.loading('Loading news...')
+    const data = await newsAPI.getNews(selectedTags)
+    if (data.resultCode === 0) {
+      dispatch(actions.setNews(data.data.news!))
+      hide()
+    }
   }
 }
 
 export const deleteNewsItemThunk = (id: string): ThunkType => {
   return async (dispatch) => {
-    dispatch(actions.toggleIsFetchingAction(true))
-    dispatch(actions.toggleRequestProgress(true, id))
+    const hide = message.loading('Deleting news...')
     const res = await newsAPI.deleteNewsItem(id)
 
     if (res.resultCode === 0) {
-      dispatch(actions.deleteNewsAction(id))
-      dispatch(actions.toggleIsFetchingAction(false))
-      dispatch(actions.toggleRequestProgress(false, id))
+      dispatch(actions.deleteNews(id))
+      hide()
+      message.success('News deleted!')
     }
   }
 }
 
 export const postNewsItemThunk = (newsItem: NewsItemType): ThunkType => {
   return async (dispatch) => {
+    const hide = message.loading('Posting news...')
     const res = await newsAPI.postNewsItem(newsItem)
     if (res.resultCode === 0) {
-      dispatch(actions.postNewsItemAction(newsItem))
+      dispatch(actions.postNewsItem(newsItem))
       dispatch(actions.toggleAppWorkMode('view'))
+      hide()
+      message.success('News Posted!')
+    }
+  }
+}
+
+export const updateNewsItemThunk = (newsItem: NewsItemType): ThunkType => {
+  return async (dispatch) => {
+    const hide = message.loading('Updating news...')
+    const res = await newsAPI.updateNewsItem(newsItem)
+    if (res.resultCode === 0) {
+      dispatch(actions.updateNewsItem(newsItem))
+      dispatch(actions.toggleAppWorkMode('view'))
+      hide()
+      message.success('News updated!')
     }
   }
 }
@@ -222,6 +252,7 @@ export const selectTagThunk = (
     dispatch(actions.addSelectedTag(tag))
     dispatch(actions.updateSearchField(''))
     dispatch(getRelevantTagsThunk('', [...selectedTags, tag]))
+    dispatch(requestNewsThunk([...selectedTags, tag]))
   }
 }
 export const unselectTagThunk = (
@@ -237,6 +268,7 @@ export const unselectTagThunk = (
         selectedTags.filter((selTag) => selTag !== tag)
       )
     )
+    dispatch(requestNewsThunk(selectedTags.filter((selTag) => selTag !== tag)))
   }
 }
 
