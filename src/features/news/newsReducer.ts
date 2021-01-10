@@ -1,5 +1,5 @@
 import { message } from 'antd'
-import { newsAPI } from '../../api/api'
+import { newsAPI } from '../../api/fakeApi'
 import { BaseThunkType, InferActionsTypes } from '../../store'
 import { AppWorkModeType, NewsItemType } from './types'
 

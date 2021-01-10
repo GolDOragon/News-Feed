@@ -2,12 +2,10 @@
 import { Action, applyMiddleware, combineReducers, createStore } from 'redux'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import thunkMiddleWare, { ThunkAction } from 'redux-thunk'
-import { CounterReducer } from './features/counter'
 import { NewsReducer } from './features/news'
 
 /* Create root reducer, containing all features of the application */
 const rootReducer = combineReducers({
-  count: CounterReducer,
   news: NewsReducer,
 })
 
