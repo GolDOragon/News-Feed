@@ -1,0 +1,7 @@
+.newsForm {
+  border: 1px solid #b0bec5;
+  padding: 5px 0;
+}
+.newsForm__submitBtn-container {
+  margin-right: 5px;
+}
