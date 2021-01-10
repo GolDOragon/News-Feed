@@ -2,9 +2,7 @@ import { createSelector } from 'reselect'
 import { AppStateType } from '../../store'
 
 export const getNews = createSelector(
-  [
-    (state: AppStateType) => state.news.news,
-  ],
+  [(state: AppStateType) => state.news.news],
   (filteredNews) => {
     const executeDate = (date: Date): string => {
       const diff = Date.now() - +date
@@ -32,8 +30,6 @@ export const getAppWorkMode = (state: AppStateType) => state.news.appWorkMode
 
 export const getCurrentNewsItem = (state: AppStateType) =>
   state.news.currentNewsItem
-
-export const getSearchField = (state: AppStateType) => state.news.searchField
 
 export const getRelevantTags = (state: AppStateType) =>
   state.news.relevantTags.map((tag) => ({ value: tag, label: tag }))

@@ -1,9 +1,8 @@
 import { Select } from 'antd'
-import React from 'react'
+import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { newsSelectors } from '../../features/news'
 import {
-  actions,
   getRelevantTagsThunk,
   selectTagThunk,
   unselectTagThunk
@@ -12,19 +11,20 @@ import {
 const SearchBar = () => {
   const dispatch = useDispatch()
 
-  const searchField = useSelector(newsSelectors.getSearchField)
+  const [searchValue, setSearchValue] = useState('')
   const relevantTags = useSelector(newsSelectors.getRelevantTags)
   const selectedTags = useSelector(newsSelectors.getSelectedTags)
 
-  const handleChangeSearchField = (value: string) => {
-    dispatch(actions.updateSearchField(value))
+  const handleChangeSearchValue = (value: string) => {
+    setSearchValue(value)
     dispatch(getRelevantTagsThunk(value, selectedTags))
   }
   const handleSelectTag = (tag: string) => {
-    dispatch(selectTagThunk(tag, selectedTags))
+    setSearchValue('')
+    dispatch(selectTagThunk(tag, searchValue, selectedTags))
   }
   const handleUnselectTag = (tag: string) => {
-    dispatch(unselectTagThunk(tag, searchField, selectedTags))
+    dispatch(unselectTagThunk(tag, searchValue, selectedTags))
   }
 
   return (
@@ -32,9 +32,10 @@ const SearchBar = () => {
       <Select
         mode="multiple"
         options={relevantTags}
-        searchValue={searchField}
+        searchValue={searchValue}
+        open={!!searchValue}
         placeholder="Select tags..."
-        onSearch={handleChangeSearchField}
+        onSearch={handleChangeSearchValue}
         onSelect={handleSelectTag}
         onDeselect={handleUnselectTag}
         getPopupContainer={(trigger) => trigger.parentNode}

@@ -5,7 +5,6 @@ import { AppWorkModeType, NewsItemType } from './types'
 
 const initialState = {
   appWorkMode: 'view' as AppWorkModeType,
-  isEditMode: false,
   news: [] as Array<NewsItemType>,
   currentNewsItem: {
     id: '',
@@ -17,7 +16,6 @@ const initialState = {
   } as NewsItemType,
   relevantTags: [] as Array<string>,
   selectedTags: [] as Array<string>,
-  searchField: '',
 }
 
 const newsReducer = (
@@ -30,7 +28,6 @@ const newsReducer = (
         ...state,
         appWorkMode: action.newValue,
       }
-
 
     case 'SET_NEWS':
       return { ...state, news: action.news }
@@ -79,12 +76,6 @@ const newsReducer = (
           title: '',
           tags: [],
         },
-      }
-
-    case 'UPDATE_SEARCH_FIELD':
-      return {
-        ...state,
-        searchField: action.newValue,
       }
 
     case 'SET_RELEVANT_TAGS':
@@ -151,16 +142,6 @@ export const actions = {
     ({
       type: 'ADD_NEWS_ITEM_TO_STATE',
       id,
-    } as const),
-  sendNewsItemToState: (newsItem: NewsItemType) =>
-    ({
-      type: 'SEND_NEWS_ITEM_TO_STATE',
-      newsItem,
-    } as const),
-  updateSearchField: (newValue: string) =>
-    ({
-      type: 'UPDATE_SEARCH_FIELD',
-      newValue,
     } as const),
   setRelevantTags: (tags: Array<string>) =>
     ({
@@ -246,25 +227,25 @@ export const getRelevantTagsThunk = (
 
 export const selectTagThunk = (
   tag: string,
+  searchValue: string,
   selectedTags: Array<string>
 ): ThunkType => {
   return async (dispatch) => {
     dispatch(actions.addSelectedTag(tag))
-    dispatch(actions.updateSearchField(''))
-    dispatch(getRelevantTagsThunk('', [...selectedTags, tag]))
+    dispatch(getRelevantTagsThunk(searchValue, [...selectedTags, tag]))
     dispatch(requestNewsThunk([...selectedTags, tag]))
   }
 }
 export const unselectTagThunk = (
   tag: string,
-  searchField: string,
+  searchValue: string,
   selectedTags: Array<string>
 ): ThunkType => {
   return async (dispatch) => {
     dispatch(actions.removeSelectedTag(tag))
     dispatch(
       getRelevantTagsThunk(
-        searchField,
+        searchValue,
         selectedTags.filter((selTag) => selTag !== tag)
       )
     )
