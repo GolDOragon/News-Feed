@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect'
+// eslint-disable-next-line import/no-cycle
 import { AppStateType } from '../../store'
 
 export const getNews = createSelector(
@@ -11,12 +12,15 @@ export const getNews = createSelector(
       if (sec < 60) return 'less 1 min'
 
       const min = Math.floor(diff / (60 * 1000))
-      if (min < 60) return min + ' min'
+      if (min < 60) return `${min} min`
 
       const hours = Math.floor(diff / (60 * 60 * 1000))
-      if (hours < 49) return hours + 'h'
+      if (hours < 49) return `${hours}h`
 
-      return date.toUTCString().match(/\d{2} \w+/)![0]
+      return (
+        date.toUTCString().match(/\d{2} \w+ /)![0] +
+        date.getFullYear().toString().slice(2)
+      )
     }
 
     return filteredNews.map((newsItem) => ({
